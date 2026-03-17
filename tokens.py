@@ -18,6 +18,7 @@ class TokenType(Enum):
 
 
 
+
 class Token:
 
     def __init__(

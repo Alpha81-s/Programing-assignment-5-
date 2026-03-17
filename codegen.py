@@ -33,31 +33,30 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
 
     code = InstructionList()
 
+
     if isinstance(statement, IntDclNode):
         return code
-    
+
     if isinstance(statement, IntLitNode):
         code.append(str(statement.value))
         return code
 
     if isinstance(statement, VarRefNode):
-        code.append(f"l{statement.name}")
+        code.append('l'+str(statement.varname))
         return code
     
     if isinstance(statement, PrintNode):
-        exprcode = stmtcodegen(statement.expr)
-        code.extend(exprcode)
-        code.append("p")
+        code.append('l'+str(statement.varname)+'p')
         return code
     
     if isinstance(statement, AssignNode):
-        exprcode = stmtcodegen(statement.expr)
-        code.extend(exprcode)
-        code.append(f"s{statement.name}")
-        return code
+        code.extend(stmtcodegen(statement.expr))
+        code.append('s'+str(statement.varname))
+        return code    
+
     
     if isinstance(statement, BinOpNode):
-        if statement.op == "^":
+        if statement.optype.value == "^":
             if not isinstance(statement.right, IntLitNode):
                 leftcode = stmtcodegen(statement.left)
                 rightcode = stmtcodegen(statement.right)
@@ -68,6 +67,8 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
             
             exponent = statement.right.value
             basecode = stmtcodegen(statement.left)
+
+            code.extend(basecode)
 
             if exponent == 0:
                 code.append("1")
@@ -82,22 +83,22 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
                 code.append("*")
 
 
-            return basecode  
+            return code  
 
         leftcode = stmtcodegen(statement.left)
         rightcode = stmtcodegen(statement.right)
         code.extend(leftcode)
         code.extend(rightcode)
 
-        if statement.op == "+":
+        if statement.optype.value == "+":
             code.append("+")
-        elif statement.op == "-":
+        elif statement.optype.value == "-":
             code.append("-")
-        elif statement.op == "*":
+        elif statement.optype.value == "*":
             code.append("*")
-        elif statement.op == "/":
+        elif statement.optype.value == "/":
             code.append("/")
         else:
-            raise ValueError(f"Unknown operator {statement.op}")
+            raise ValueError(f"Unknown operator {statement.optype}")
 
         return code

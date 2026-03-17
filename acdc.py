@@ -71,7 +71,7 @@ except Exception as e:
 instructions = codegenerator(program)
 
 for instruction in instructions:
-    outputfile.write(instruction + '\n')
+    outputfile.write(str(instruction) + '\n')
 
 
 
