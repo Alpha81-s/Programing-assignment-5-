@@ -82,7 +82,7 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
                 code.append("*")
 
 
-            return code  
+            return basecode  
 
         leftcode = stmtcodegen(statement.left)
         rightcode = stmtcodegen(statement.right)
